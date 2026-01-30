@@ -1,0 +1,30 @@
+# yaml-language-server: $schema=https://www.openstatus.dev/schema.json
+
+mcp-server:
+  name: "callaback status server"
+  description: "service and API monitoring"
+  frequency: "1m"
+  active: true
+  regions: ["iad", "ams", "lax"]
+  retry: 3
+  kind: http
+  request:
+    url: https://callaback.com
+    method: POST
+    body: >
+      {
+        "jsonrpc": "2.0",
+        "id": "openstatus",
+        "method": "ping"
+      }
+    headers:
+      User-Agent: OpenStatus
+      Accept: application/json, text/event-stream
+      Content-Type: application/json
+  assertions:
+    - kind: statusCode
+      compare: eq
+      target: 200
+    - kind: textBody
+      compare: eq
+      target: '{"result":{},"jsonrpc":"2.0","id":"openstatus"}'
